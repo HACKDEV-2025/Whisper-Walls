@@ -1,0 +1,1908 @@
+WHY BOTH SSH AND HTTPS EXIST
+GitHub allows two authentication methods:
+
+🔵 1. SSH = Key-based authentication
+✔ No password
+ ✔ No token
+ ✔ Stronger security
+ ✔ Faster
+ ✔ Once configured, never asks for login again
+ ✔ Best for developers working daily in terminal
+SSH uses:
+git@github.com:username/repo.git
+
+This matches your current working setup.
+
+🟢 2. HTTPS = Token-based authentication
+✔ Requires Personal Access Token (PAT)
+ ✔ Works everywhere (even office networks, schools, companies)
+ ✔ Easy for beginners
+ ✔ Works without generating SSH keys
+HTTPS uses:
+https://github.com/username/repo.git
+
+
+⭐ THEN WHY HAVE BOTH IF PUSH IS SAME?
+Because different situations need different methods.
+
+📝 Reason 1 — Many companies block SSH
+Some offices block port 22, which SSH needs.
+ HTTPS (port 443) always works.
+So corporate developers MUST use HTTPS.
+
+📝 Reason 2 — Cloning public repos works anonymously via HTTPS
+You can:
+git clone https://github.com/.../repo.git
+
+No login needed.
+
+📝 Reason 3 — SSH is convenient for heavy developers
+Daily contributors prefer SSH because:
+Never asks password/token
+
+
+More secure
+
+
+Works better for automation
+
+
+
+📝 Reason 4 — Some tools or scripts need HTTPS
+CI/CD pipelines, servers, or cloud services often only support HTTPS tokens.
+
+⭐ Summary in One Line
+HTTPS is simple & universal. SSH is secure & convenient.
+ Both are allowed so that developers can choose what fits their environment.
+
+⭐ Which one should you use?
+Since you already set up SSH successfully:
+✔ Use SSH for daily work (push/pull)
+Super easy. No password required.
+✔ Use HTTPS only if:
+SSH port is blocked
+
+
+You want to use token-based access
+
+
+Some system requires it
+
+
+__________________________________________________________________
+
+
+
+✅ 1. Install Git (on Windows)
+Download Git for Windows:
+ https://git-scm.com/download/win
+ Install with default settings.
+(WSL Ubuntu already includes Git, but Windows Git is also useful.)
+
+✅ 2. Check Git in WSL
+Open Ubuntu (WSL) and run:
+git --version
+
+If needed:
+sudo apt update
+sudo apt install git -y
+
+
+✅ 3. Set your Git identity
+Use the SAME email as GitHub:
+git config --global user.name "Shubham"
+git config --global user.email "shubhamdudhbhate2006@gmail.com"
+
+Check:
+git config --list
+
+
+🔥 IMPORTANT: DELETE WRONG SSH KEYS BEFORE CONTINUING
+You accidentally created a wrong key file (“Shubham”), so let’s clean the folder.
+Run:
+rm -rf ~/.ssh
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+
+Now the folder is empty and clean.
+
+⚡ NOW WE START THE CORRECT SSH SETUP
+
+✅ 4. Create a NEW SSH key (correct method)
+ssh-keygen -t ed25519 -C "shubhamdudhbhate2006@gmail.com"
+
+When it asks:
+Enter file in which to save the key (/home/shubham/.ssh/id_ed25519):
+
+👉 PRESS ENTER (do NOT type anything)
+When it asks for passphrase → press ENTER two times.
+
+✅ 5. Start SSH agent
+eval "$(ssh-agent -s)"
+
+
+✅ 6. Add your private key
+ssh-add ~/.ssh/id_ed25519
+
+
+✅ 7. Get PUBLIC key to add to GitHub
+cat ~/.ssh/id_ed25519.pub
+
+Copy the FULL line starting with:
+ssh-ed25519 AAAA...
+
+
+✅ 8. Add key to GitHub
+Go to:
+GitHub → Settings → SSH and GPG Keys → New SSH Key
+Title: WSL Ubuntu
+
+
+Key: (paste the key)
+
+
+Key type: Authentication Key
+
+
+Save
+
+
+
+✅ 9. Test the connection
+ssh -T git@github.com
+
+Correct output:
+Hi ShubhamDudhbhate-VJTI! You've successfully authenticated, but GitHub does not provide shell access.
+
+This means → WORKING 100%
+
+cd /mnt/c/Users/Shubham/Desktop/OST
+
+
+🚀 NOW YOU ARE READY TO USE GIT
+Examples:
+Create a repo:
+mkdir myproject
+cd myproject
+git init
+
+Add files:
+git add .
+
+Commit:
+git commit -m "first commit"
+
+Add remote:
+git remote add origin git@github.com:ShubhamDudhbhate-VJTI/myrepo.git
+
+Push:
+git push -u origin main
+
+
+
+mkdir myproject
+cd myproject
+git init
+
+
+
+3. Connect this folder to GitHub repo
+git remote remove origin
+
+
+Copy the SSH URL from GitHub repo:
+git@github.com:YourUsername/myproject.git
+git@github.com:ShubhamDudhbhate-VJTI/OST.git
+
+
+Add remote:
+git remote add origin git@github.com:YourUsername/myproject.git
+git remote add origin https://github.com/ShubhamDudhbhate-VJTI/OST.git
+
+
+
+
+UserName: ShubhamDudhbhate-VJTI
+
+Password : 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
+
+
+Check:
+git remote -v
+
+
+
+
+
+git branch -m main
+
+
+ls
+echo "OST projects" > README.md
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+
+
+
+
+
+
+__________________________________________________________________________________________
+
+
+
+
+__________________________________________________________________________________________
+
+
+FORKING WORKFLOW (VERY CLEAR VERSION)
+Use this when you want to contribute to someone else’s repository.
+
+⭐ STEP 1 — Fork the Repo on GitHub
+Open the original GitHub repo
+
+
+Click Fork
+
+
+Now the repo appears in your account:
+
+
+github.com/YourUsername/ForkedRepo
+
+
+⭐ STEP 2 — Clone YOUR fork (not the original)
+If using SSH:
+git clone git@github.com:YourUsername/ForkedRepo.git
+cd ForkedRepo
+
+Or HTTPS:
+git clone https://github.com/YourUsername/ForkedRepo.git
+cd ForkedRepo
+
+
+⭐ STEP 3 — Add the ORIGINAL repo as “upstream”
+git remote add upstream git@github.com:OriginalUser/OriginalRepo.git
+
+Check:
+git remote -v
+
+You should see:
+origin    --> your fork
+upstream  --> original repo
+
+✔ origin = your fork
+ ✔ upstream = original repo
+
+⭐ STEP 4 — Create a Branch for Your Work
+Never work on main.
+ Always create a new branch:
+git checkout -b feature-branch
+
+
+⭐ STEP 5 — Make Changes and Commit
+git add .
+git commit -m "Added new feature"
+
+
+⭐ STEP 6 — Push Branch to YOUR Fork
+git push -u origin feature-branch
+
+
+⭐ STEP 7 — Create a Pull Request (PR)
+Go to:
+github.com/YourUsername/ForkedRepo
+
+You will see:
+Compare & Pull Request
+
+Click → Write description → Submit PR.
+
+⭐ STEP 8 — KEEP YOUR FORK UPDATED
+When the original repo gets new updates, sync them to your fork.
+Step A: Fetch original repo updates
+git fetch upstream
+
+Step B: Update your main branch
+git checkout main
+git merge upstream/main
+
+OR easier:
+git pull upstream main
+
+Step C: Push updated main to your GitHub fork
+git push origin main
+
+____________________________________________________________________
+
+
+CLEAR SUMMARY OF IMPORTANT COMMANDS
+LOCAL
+git init       → start repo on your PC
+git add .      → stage files on your PC
+git commit     → save on your PC
+git push       → send from PC → GitHub (remote)
+
+REMOTE
+git remote add origin <url>  → link PC repo → GitHub repo
+git remote add upstream <url>→ link PC repo → original repo (in forking)
+git remote -v                → show GitHub connections
+git remote set-url origin    → change GitHub link
+
+
+Branching
+git branch
+git checkout -b new-branch
+git checkout main
+git merge new-branch
+
+Updating your fork
+git pull upstream main
+
+
+WHAT IS A MERGE CONFLICT?
+A merge conflict happens when Git cannot automatically merge changes because:
+two people changed the same line
+
+
+or one edited a file while the other deleted it
+
+
+or commits overlap
+
+
+
+✅ GENERAL PROCESS TO SOLVE ANY CONFLICT
+Git warns you about a conflict
+Open the conflicted file → you will see:
+
+
+<<<<<<< HEAD
+(your changes)
+=======
+(their changes)
+>>>>>>> branch-name
+
+Decide what to keep:
+
+
+your version
+
+
+their version
+
+
+combine both
+
+
+manually edit
+
+
+Remove the conflict markers:
+ <<<<<<<, =======, >>>>>>>
+
+
+Save the file
+
+
+Run:
+
+
+git add <file>
+git commit -m "Resolved conflict"
+git push
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HTTPS
+
+✅ STEP 1 — Check HTTPS Remote
+To see current URL:
+git remote -v
+
+If you see SSH like:
+git@github.com:ShubhamDudhbhate-VJTI/OST.git
+
+→ That’s SSH.
+To switch to HTTPS:
+git remote set-url origin https://github.com/ShubhamDudhbhate-VJTI/OST.git
+
+Done.
+
+✅ STEP 2 — Generate a Personal Access Token (PAT)
+PAT replaces your password.
+Go to GitHub:
+⚙️ Settings → Developer Settings → Personal Access Tokens
+ Choose:
+Fine-grained token (recommended)
+Permissions needed:
+✔ Contents → Read and Write
+ ✔ Pull Requests → Read and Write
+ ✔ Metadata → Read
+Generate → Copy the token.
+ (You cannot see it again later.)
+
+❗ IMPORTANT
+When Git asks:
+Username for 'https://github.com':
+
+You enter:
+Your GitHub username (ShubhamDudhbhate)
+
+Then it asks:
+Password for “”
+
+You MUST paste your PAT (token)
+ NOT your GitHub password.
+
+✅ STEP 3 — Test push using HTTPS
+git push -u origin main
+
+It will ask:
+✔ Username → your GitHub username
+ ✔ Password → your PAT token
+If correct → push works.
+
+🌟 AFTER YOU LOGIN ONCE
+Git will remember your PAT using Windows Credential Manager.
+You won’t need to enter it again.
+
+⭐ SUMMARY OF HTTPS SETUP COMMANDS
+Set HTTPS remote:
+git remote set-url origin https://github.com/YourUser/YourRepo.git
+
+Clone using HTTPS:
+git clone https://github.com/YourUser/YourRepo.git
+
+Push using HTTPS:
+git push -u origin main
+
+Git will ask for username + PAT.
+
+
+
+METHOD 1 — Use Credential Manager (BEST for Windows)
+Git can save your token permanently using:
+Run this in WSL:
+git config --global credential.helper manager-core
+
+This uses Git Credential Manager (GCM) which securely stores your PAT in Windows Credential Manager.
+Now push:
+git push -u origin main
+
+It will ask:
+✔ Username → your GitHub username
+ ✔ Password → your PAT token
+Then GCM stores it forever.
+ Next time → no password asked.
+
+ IF YOU PREVIOUSLY UNSET CREDENTIALS
+Run this to clean old settings:
+git config --global --unset credential.helper
+git config --system --unset credential.helper 2>/dev/null
+git config --local --unset credential.helper 2>/dev/null
+
+Then set again:
+git config --global credential.helper manager-core
+
+_________________________________________________________________________
+
+
+
+
+
+
+Summery:
+
+✅ 1. SIMILARITIES (commands that are 100% SAME)
+Whether you use SSH or HTTPS, the following commands NEVER change:
+✔ Git Basics (same)
+git init
+git add .
+git commit -m "msg"
+git status
+git log
+
+✔ Branch commands (same)
+git branch
+git checkout -b feature
+git checkout main
+git merge feature
+
+✔ Local operations (same)
+Everything done inside your PC is 100% same for SSH & HTTPS.
+
+🚀 2. PUSH / PULL commands (same)
+git push
+git push -u origin main
+git pull
+git fetch
+
+Even here — SSH or HTTPS makes NO difference.
+
+🔥 3. WHAT IS DIFFERENT? Only ONE thing: the remote URL
+SSH remote URL looks like:
+git@github.com:Username/Repo.git
+
+HTTPS remote URL looks like:
+https://github.com/Username/Repo.git
+
+That’s the ONLY difference in commands.
+
+🔥 4. COMMANDS THAT ARE DIFFERENT
+A) Add remote
+SSH:
+git remote add origin git@github.com:Username/Repo.git
+
+HTTPS:
+git remote add origin https://github.com/Username/Repo.git
+
+B) Change remote
+SSH:
+git remote set-url origin git@github.com:Username/Repo.git
+
+HTTPS:
+git remote set-url origin https://github.com/Username/Repo.git
+
+C) Authentication required?
+SSH:
+ ✔️ No password
+ ✔️ No token
+ ✔️ Never asks again
+HTTPS:
+ ❌ Cannot use password
+ ✔️ Must use Personal Access Token (PAT)
+ 🔁 If no credential helper → asks again
+
+🧠 5. Authentication difference (VERY IMPORTANT)
+SSH Login Test
+ssh -T git@github.com
+
+If SSH keys are set → login works.
+HTTPS Login Uses PAT
+git push
+
+Then it asks:
+Username (GitHub username)
+
+
+Password → use PAT, not GitHub password
+
+
+
+🧩 6. When cloning — difference
+SSH:
+git clone git@github.com:Username/Repo.git
+
+HTTPS:
+git clone https://github.com/Username/Repo.git
+
+
+
+
+
+
+⭐ FINAL SUMMARY (super clear)
+WHY BOTH SSH AND HTTPS EXIST
+GitHub allows two authentication methods:
+
+🔵 1. SSH = Key-based authentication
+✔ No password
+ ✔ No token
+ ✔ Stronger security
+ ✔ Faster
+ ✔ Once configured, never asks for login again
+ ✔ Best for developers working daily in terminal
+SSH uses:
+git@github.com:username/repo.git
+
+This matches your current working setup.
+
+🟢 2. HTTPS = Token-based authentication
+✔ Requires Personal Access Token (PAT)
+ ✔ Works everywhere (even office networks, schools, companies)
+ ✔ Easy for beginners
+ ✔ Works without generating SSH keys
+HTTPS uses:
+https://github.com/username/repo.git
+
+
+⭐ THEN WHY HAVE BOTH IF PUSH IS SAME?
+Because different situations need different methods.
+
+📝 Reason 1 — Many companies block SSH
+Some offices block port 22, which SSH needs.
+ HTTPS (port 443) always works.
+So corporate developers MUST use HTTPS.
+
+📝 Reason 2 — Cloning public repos works anonymously via HTTPS
+You can:
+git clone https://github.com/.../repo.git
+
+No login needed.
+
+📝 Reason 3 — SSH is convenient for heavy developers
+Daily contributors prefer SSH because:
+Never asks password/token
+
+
+More secure
+
+
+Works better for automation
+
+
+
+📝 Reason 4 — Some tools or scripts need HTTPS
+CI/CD pipelines, servers, or cloud services often only support HTTPS tokens.
+
+⭐ Summary in One Line
+HTTPS is simple & universal. SSH is secure & convenient.
+ Both are allowed so that developers can choose what fits their environment.
+
+⭐ Which one should you use?
+Since you already set up SSH successfully:
+✔ Use SSH for daily work (push/pull)
+Super easy. No password required.
+✔ Use HTTPS only if:
+SSH port is blocked
+
+
+You want to use token-based access
+
+
+Some system requires it
+
+
+__________________________________________________________________
+
+
+
+✅ 1. Install Git (on Windows)
+Download Git for Windows:
+ https://git-scm.com/download/win
+ Install with default settings.
+(WSL Ubuntu already includes Git, but Windows Git is also useful.)
+
+✅ 2. Check Git in WSL
+Open Ubuntu (WSL) and run:
+git --version
+
+If needed:
+sudo apt update
+sudo apt install git -y
+
+
+✅ 3. Set your Git identity
+Use the SAME email as GitHub:
+git config --global user.name "Shubham"
+git config --global user.email "shubhamdudhbhate2006@gmail.com"
+
+Check:
+git config --list
+
+
+🔥 IMPORTANT: DELETE WRONG SSH KEYS BEFORE CONTINUING
+You accidentally created a wrong key file (“Shubham”), so let’s clean the folder.
+Run:
+rm -rf ~/.ssh
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+
+Now the folder is empty and clean.
+
+⚡ NOW WE START THE CORRECT SSH SETUP
+
+✅ 4. Create a NEW SSH key (correct method)
+ssh-keygen -t ed25519 -C "shubhamdudhbhate2006@gmail.com"
+
+When it asks:
+Enter file in which to save the key (/home/shubham/.ssh/id_ed25519):
+
+👉 PRESS ENTER (do NOT type anything)
+When it asks for passphrase → press ENTER two times.
+
+✅ 5. Start SSH agent
+eval "$(ssh-agent -s)"
+
+
+✅ 6. Add your private key
+ssh-add ~/.ssh/id_ed25519
+
+
+✅ 7. Get PUBLIC key to add to GitHub
+cat ~/.ssh/id_ed25519.pub
+
+Copy the FULL line starting with:
+ssh-ed25519 AAAA...
+
+
+✅ 8. Add key to GitHub
+Go to:
+GitHub → Settings → SSH and GPG Keys → New SSH Key
+Title: WSL Ubuntu
+
+
+Key: (paste the key)
+
+
+Key type: Authentication Key
+
+
+Save
+
+
+
+✅ 9. Test the connection
+ssh -T git@github.com
+
+Correct output:
+Hi ShubhamDudhbhate-VJTI! You've successfully authenticated, but GitHub does not provide shell access.
+
+This means → WORKING 100%
+
+cd /mnt/c/Users/Shubham/Desktop/OST
+
+
+🚀 NOW YOU ARE READY TO USE GIT
+Examples:
+Create a repo:
+mkdir myproject
+cd myproject
+git init
+
+Add files:
+git add .
+
+Commit:
+git commit -m "first commit"
+
+Add remote:
+git remote add origin git@github.com:ShubhamDudhbhate-VJTI/myrepo.git
+
+Push:
+git push -u origin main
+
+
+
+mkdir myproject
+cd myproject
+git init
+
+
+
+3. Connect this folder to GitHub repo
+git remote remove origin
+
+
+Copy the SSH URL from GitHub repo:
+git@github.com:YourUsername/myproject.git
+git@github.com:ShubhamDudhbhate-VJTI/OST.git
+
+
+Add remote:
+git remote add origin git@github.com:YourUsername/myproject.git
+git remote add origin https://github.com/ShubhamDudhbhate-VJTI/OST.git
+
+
+
+
+UserName: ShubhamDudhbhate-VJTI
+
+Password : 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
+
+
+Check:
+git remote -v
+
+
+
+
+
+git branch -m main
+
+
+ls
+echo "OST projects" > README.md
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+
+
+
+
+
+
+__________________________________________________________________________________________
+
+
+
+
+__________________________________________________________________________________________
+
+
+FORKING WORKFLOW (VERY CLEAR VERSION)
+Use this when you want to contribute to someone else’s repository.
+
+⭐ STEP 1 — Fork the Repo on GitHub
+Open the original GitHub repo
+
+
+Click Fork
+
+
+Now the repo appears in your account:
+
+
+github.com/YourUsername/ForkedRepo
+
+
+⭐ STEP 2 — Clone YOUR fork (not the original)
+If using SSH:
+git clone git@github.com:YourUsername/ForkedRepo.git
+cd ForkedRepo
+
+Or HTTPS:
+git clone https://github.com/YourUsername/ForkedRepo.git
+cd ForkedRepo
+
+
+⭐ STEP 3 — Add the ORIGINAL repo as “upstream”
+git remote add upstream git@github.com:OriginalUser/OriginalRepo.git
+
+Check:
+git remote -v
+
+You should see:
+origin    --> your fork
+upstream  --> original repo
+
+✔ origin = your fork
+ ✔ upstream = original repo
+
+⭐ STEP 4 — Create a Branch for Your Work
+Never work on main.
+ Always create a new branch:
+git checkout -b feature-branch
+
+
+⭐ STEP 5 — Make Changes and Commit
+git add .
+git commit -m "Added new feature"
+
+
+⭐ STEP 6 — Push Branch to YOUR Fork
+git push -u origin feature-branch
+
+
+⭐ STEP 7 — Create a Pull Request (PR)
+Go to:
+github.com/YourUsername/ForkedRepo
+
+You will see:
+Compare & Pull Request
+
+Click → Write description → Submit PR.
+
+⭐ STEP 8 — KEEP YOUR FORK UPDATED
+When the original repo gets new updates, sync them to your fork.
+Step A: Fetch original repo updates
+git fetch upstream
+
+Step B: Update your main branch
+git checkout main
+git merge upstream/main
+
+OR easier:
+git pull upstream main
+
+Step C: Push updated main to your GitHub fork
+git push origin main
+
+____________________________________________________________________
+
+
+CLEAR SUMMARY OF IMPORTANT COMMANDS
+LOCAL
+git init       → start repo on your PC
+git add .      → stage files on your PC
+git commit     → save on your PC
+git push       → send from PC → GitHub (remote)
+
+REMOTE
+git remote add origin <url>  → link PC repo → GitHub repo
+git remote add upstream <url>→ link PC repo → original repo (in forking)
+git remote -v                → show GitHub connections
+git remote set-url origin    → change GitHub link
+
+
+Branching
+git branch
+git checkout -b new-branch
+git checkout main
+git merge new-branch
+
+Updating your fork
+git pull upstream main
+
+
+WHAT IS A MERGE CONFLICT?
+A merge conflict happens when Git cannot automatically merge changes because:
+two people changed the same line
+
+
+or one edited a file while the other deleted it
+
+
+or commits overlap
+
+
+
+✅ GENERAL PROCESS TO SOLVE ANY CONFLICT
+Git warns you about a conflict
+Open the conflicted file → you will see:
+
+
+<<<<<<< HEAD
+(your changes)
+=======
+(their changes)
+>>>>>>> branch-name
+
+Decide what to keep:
+
+
+your version
+
+
+their version
+
+
+combine both
+
+
+manually edit
+
+
+Remove the conflict markers:
+ <<<<<<<, =======, >>>>>>>
+
+
+Save the file
+
+
+Run:
+
+
+git add <file>
+git commit -m "Resolved conflict"
+git push
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HTTPS
+
+✅ STEP 1 — Check HTTPS Remote
+To see current URL:
+git remote -v
+
+If you see SSH like:
+git@github.com:ShubhamDudhbhate-VJTI/OST.git
+
+→ That’s SSH.
+To switch to HTTPS:
+git remote set-url origin https://github.com/ShubhamDudhbhate-VJTI/OST.git
+
+Done.
+
+✅ STEP 2 — Generate a Personal Access Token (PAT)
+PAT replaces your password.
+Go to GitHub:
+⚙️ Settings → Developer Settings → Personal Access Tokens
+ Choose:
+Fine-grained token (recommended)
+Permissions needed:
+✔ Contents → Read and Write
+ ✔ Pull Requests → Read and Write
+ ✔ Metadata → Read
+Generate → Copy the token.
+ (You cannot see it again later.)
+
+❗ IMPORTANT
+When Git asks:
+Username for 'https://github.com':
+
+You enter:
+Your GitHub username (ShubhamDudhbhate)
+
+Then it asks:
+Password for “”
+
+You MUST paste your PAT (token)
+ NOT your GitHub password.
+
+✅ STEP 3 — Test push using HTTPS
+git push -u origin main
+
+It will ask:
+✔ Username → your GitHub username
+ ✔ Password → your PAT token
+If correct → push works.
+
+🌟 AFTER YOU LOGIN ONCE
+Git will remember your PAT using Windows Credential Manager.
+You won’t need to enter it again.
+
+⭐ SUMMARY OF HTTPS SETUP COMMANDS
+Set HTTPS remote:
+git remote set-url origin https://github.com/YourUser/YourRepo.git
+
+Clone using HTTPS:
+git clone https://github.com/YourUser/YourRepo.git
+
+Push using HTTPS:
+git push -u origin main
+
+Git will ask for username + PAT.
+
+
+
+METHOD 1 — Use Credential Manager (BEST for Windows)
+Git can save your token permanently using:
+Run this in WSL:
+git config --global credential.helper manager-core
+
+This uses Git Credential Manager (GCM) which securely stores your PAT in Windows Credential Manager.
+Now push:
+git push -u origin main
+
+It will ask:
+✔ Username → your GitHub username
+ ✔ Password → your PAT token
+Then GCM stores it forever.
+ Next time → no password asked.
+
+ IF YOU PREVIOUSLY UNSET CREDENTIALS
+Run this to clean old settings:
+git config --global --unset credential.helper
+git config --system --unset credential.helper 2>/dev/null
+git config --local --unset credential.helper 2>/dev/null
+
+Then set again:
+git config --global credential.helper manager-core
+
+_________________________________________________________________________
+
+
+
+
+
+
+Summery:
+
+✅ 1. SIMILARITIES (commands that are 100% SAME)
+Whether you use SSH or HTTPS, the following commands NEVER change:
+✔ Git Basics (same)
+git init
+git add .
+git commit -m "msg"
+git status
+git log
+
+✔ Branch commands (same)
+git branch
+git checkout -b feature
+git checkout main
+git merge feature
+
+✔ Local operations (same)
+Everything done inside your PC is 100% same for SSH & HTTPS.
+
+🚀 2. PUSH / PULL commands (same)
+git push
+git push -u origin main
+git pull
+git fetch
+
+Even here — SSH or HTTPS makes NO difference.
+
+🔥 3. WHAT IS DIFFERENT? Only ONE thing: the remote URL
+SSH remote URL looks like:
+git@github.com:Username/Repo.git
+
+HTTPS remote URL looks like:
+https://github.com/Username/Repo.git
+
+That’s the ONLY difference in commands.
+
+🔥 4. COMMANDS THAT ARE DIFFERENT
+A) Add remote
+SSH:
+git remote add origin git@github.com:Username/Repo.git
+
+HTTPS:
+git remote add origin https://github.com/Username/Repo.git
+
+B) Change remote
+SSH:
+git remote set-url origin git@github.com:Username/Repo.git
+
+HTTPS:
+git remote set-url origin https://github.com/Username/Repo.git
+
+C) Authentication required?
+SSH:
+ ✔️ No password
+ ✔️ No token
+ ✔️ Never asks again
+HTTPS:
+ ❌ Cannot use password
+ ✔️ Must use Personal Access Token (PAT)
+ 🔁 If no credential helper → asks again
+
+🧠 5. Authentication difference (VERY IMPORTANT)
+SSH Login Test
+ssh -T git@github.com
+
+If SSH keys are set → login works.
+HTTPS Login Uses PAT
+git push
+
+Then it asks:
+Username (GitHub username)
+
+
+Password → use PAT, not GitHub password
+
+
+
+🧩 6. When cloning — difference
+SSH:
+git clone git@github.com:Username/Repo.git
+
+HTTPS:
+git clone https://github.com/Username/Repo.git
+
+
+
+
+
+
+⭐ FINAL SUMMARY (super clear)
+
+
+
+
+Feature
+SSH
+HTTPS
+Remote URLWHY BOTH SSH AND HTTPS EXIST
+GitHub allows two authentication methods:
+
+🔵 1. SSH = Key-based authentication
+✔ No password
+ ✔ No token
+ ✔ Stronger security
+ ✔ Faster
+ ✔ Once configured, never asks for login again
+ ✔ Best for developers working daily in terminal
+SSH uses:
+git@github.com:username/repo.git
+
+This matches your current working setup.
+
+🟢 2. HTTPS = Token-based authentication
+✔ Requires Personal Access Token (PAT)
+ ✔ Works everywhere (even office networks, schools, companies)
+ ✔ Easy for beginners
+ ✔ Works without generating SSH keys
+HTTPS uses:
+https://github.com/username/repo.git
+
+
+⭐ THEN WHY HAVE BOTH IF PUSH IS SAME?
+Because different situations need different methods.
+
+📝 Reason 1 — Many companies block SSH
+Some offices block port 22, which SSH needs.
+ HTTPS (port 443) always works.
+So corporate developers MUST use HTTPS.
+
+📝 Reason 2 — Cloning public repos works anonymously via HTTPS
+You can:
+git clone https://github.com/.../repo.git
+
+No login needed.
+
+📝 Reason 3 — SSH is convenient for heavy developers
+Daily contributors prefer SSH because:
+Never asks password/token
+
+
+More secure
+
+
+Works better for automation
+
+
+
+📝 Reason 4 — Some tools or scripts need HTTPS
+CI/CD pipelines, servers, or cloud services often only support HTTPS tokens.
+
+⭐ Summary in One Line
+HTTPS is simple & universal. SSH is secure & convenient.
+ Both are allowed so that developers can choose what fits their environment.
+
+⭐ Which one should you use?
+Since you already set up SSH successfully:
+✔ Use SSH for daily work (push/pull)
+Super easy. No password required.
+✔ Use HTTPS only if:
+SSH port is blocked
+
+
+You want to use token-based access
+
+
+Some system requires it
+
+
+__________________________________________________________________
+
+
+
+✅ 1. Install Git (on Windows)
+Download Git for Windows:
+ https://git-scm.com/download/win
+ Install with default settings.
+(WSL Ubuntu already includes Git, but Windows Git is also useful.)
+
+✅ 2. Check Git in WSL
+Open Ubuntu (WSL) and run:
+git --version
+
+If needed:
+sudo apt update
+sudo apt install git -y
+
+
+✅ 3. Set your Git identity
+Use the SAME email as GitHub:
+git config --global user.name "Shubham"
+git config --global user.email "shubhamdudhbhate2006@gmail.com"
+
+Check:
+git config --list
+
+
+🔥 IMPORTANT: DELETE WRONG SSH KEYS BEFORE CONTINUING
+You accidentally created a wrong key file (“Shubham”), so let’s clean the folder.
+Run:
+rm -rf ~/.ssh
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+
+Now the folder is empty and clean.
+
+⚡ NOW WE START THE CORRECT SSH SETUP
+
+✅ 4. Create a NEW SSH key (correct method)
+ssh-keygen -t ed25519 -C "shubhamdudhbhate2006@gmail.com"
+
+When it asks:
+Enter file in which to save the key (/home/shubham/.ssh/id_ed25519):
+
+👉 PRESS ENTER (do NOT type anything)
+When it asks for passphrase → press ENTER two times.
+
+✅ 5. Start SSH agent
+eval "$(ssh-agent -s)"
+
+
+✅ 6. Add your private key
+ssh-add ~/.ssh/id_ed25519
+
+
+✅ 7. Get PUBLIC key to add to GitHub
+cat ~/.ssh/id_ed25519.pub
+
+Copy the FULL line starting with:
+ssh-ed25519 AAAA...
+
+
+✅ 8. Add key to GitHub
+Go to:
+GitHub → Settings → SSH and GPG Keys → New SSH Key
+Title: WSL Ubuntu
+
+
+Key: (paste the key)
+
+
+Key type: Authentication Key
+
+
+Save
+
+
+
+✅ 9. Test the connection
+ssh -T git@github.com
+
+Correct output:
+Hi ShubhamDudhbhate-VJTI! You've successfully authenticated, but GitHub does not provide shell access.
+
+This means → WORKING 100%
+
+cd /mnt/c/Users/Shubham/Desktop/OST
+
+
+🚀 NOW YOU ARE READY TO USE GIT
+Examples:
+Create a repo:
+mkdir myproject
+cd myproject
+git init
+
+Add files:
+git add .
+
+Commit:
+git commit -m "first commit"
+
+Add remote:
+git remote add origin git@github.com:ShubhamDudhbhate-VJTI/myrepo.git
+
+Push:
+git push -u origin main
+
+
+
+mkdir myproject
+cd myproject
+git init
+
+
+
+3. Connect this folder to GitHub repo
+git remote remove origin
+
+
+Copy the SSH URL from GitHub repo:
+git@github.com:YourUsername/myproject.git
+git@github.com:ShubhamDudhbhate-VJTI/OST.git
+
+
+Add remote:
+git remote add origin git@github.com:YourUsername/myproject.git
+git remote add origin https://github.com/ShubhamDudhbhate-VJTI/OST.git
+
+
+
+
+UserName: ShubhamDudhbhate-VJTI
+
+Password : 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
+
+
+Check:
+git remote -v
+
+
+
+
+
+git branch -m main
+
+
+ls
+echo "OST projects" > README.md
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+
+
+
+
+
+
+__________________________________________________________________________________________
+
+
+
+
+__________________________________________________________________________________________
+
+
+FORKING WORKFLOW (VERY CLEAR VERSION)
+Use this when you want to contribute to someone else’s repository.
+
+⭐ STEP 1 — Fork the Repo on GitHub
+Open the original GitHub repo
+
+
+Click Fork
+
+
+Now the repo appears in your account:
+
+
+github.com/YourUsername/ForkedRepo
+
+
+⭐ STEP 2 — Clone YOUR fork (not the original)
+If using SSH:
+git clone git@github.com:YourUsername/ForkedRepo.git
+cd ForkedRepo
+
+Or HTTPS:
+git clone https://github.com/YourUsername/ForkedRepo.git
+cd ForkedRepo
+
+
+⭐ STEP 3 — Add the ORIGINAL repo as “upstream”
+git remote add upstream git@github.com:OriginalUser/OriginalRepo.git
+
+Check:
+git remote -v
+
+You should see:
+origin    --> your fork
+upstream  --> original repo
+
+✔ origin = your fork
+ ✔ upstream = original repo
+
+⭐ STEP 4 — Create a Branch for Your Work
+Never work on main.
+ Always create a new branch:
+git checkout -b feature-branch
+
+
+⭐ STEP 5 — Make Changes and Commit
+git add .
+git commit -m "Added new feature"
+
+
+⭐ STEP 6 — Push Branch to YOUR Fork
+git push -u origin feature-branch
+
+
+⭐ STEP 7 — Create a Pull Request (PR)
+Go to:
+github.com/YourUsername/ForkedRepo
+
+You will see:
+Compare & Pull Request
+
+Click → Write description → Submit PR.
+
+⭐ STEP 8 — KEEP YOUR FORK UPDATED
+When the original repo gets new updates, sync them to your fork.
+Step A: Fetch original repo updates
+git fetch upstream
+
+Step B: Update your main branch
+git checkout main
+git merge upstream/main
+
+OR easier:
+git pull upstream main
+
+Step C: Push updated main to your GitHub fork
+git push origin main
+
+____________________________________________________________________
+
+
+CLEAR SUMMARY OF IMPORTANT COMMANDS
+LOCAL
+git init       → start repo on your PC
+git add .      → stage files on your PC
+git commit     → save on your PC
+git push       → send from PC → GitHub (remote)
+
+REMOTE
+git remote add origin <url>  → link PC repo → GitHub repo
+git remote add upstream <url>→ link PC repo → original repo (in forking)
+git remote -v                → show GitHub connections
+git remote set-url origin    → change GitHub link
+
+
+Branching
+git branch
+git checkout -b new-branch
+git checkout main
+git merge new-branch
+
+Updating your fork
+git pull upstream main
+
+
+WHAT IS A MERGE CONFLICT?
+A merge conflict happens when Git cannot automatically merge changes because:
+two people changed the same line
+
+
+or one edited a file while the other deleted it
+
+
+or commits overlap
+
+
+
+✅ GENERAL PROCESS TO SOLVE ANY CONFLICT
+Git warns you about a conflict
+Open the conflicted file → you will see:
+
+
+<<<<<<< HEAD
+(your changes)
+=======
+(their changes)
+>>>>>>> branch-name
+
+Decide what to keep:
+
+
+your version
+
+
+their version
+
+
+combine both
+
+
+manually edit
+
+
+Remove the conflict markers:
+ <<<<<<<, =======, >>>>>>>
+
+
+Save the file
+
+
+Run:
+
+
+git add <file>
+git commit -m "Resolved conflict"
+git push
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HTTPS
+
+✅ STEP 1 — Check HTTPS Remote
+To see current URL:
+git remote -v
+
+If you see SSH like:
+git@github.com:ShubhamDudhbhate-VJTI/OST.git
+
+→ That’s SSH.
+To switch to HTTPS:
+git remote set-url origin https://github.com/ShubhamDudhbhate-VJTI/OST.git
+
+Done.
+
+✅ STEP 2 — Generate a Personal Access Token (PAT)
+PAT replaces your password.
+Go to GitHub:
+⚙️ Settings → Developer Settings → Personal Access Tokens
+ Choose:
+Fine-grained token (recommended)
+Permissions needed:
+✔ Contents → Read and Write
+ ✔ Pull Requests → Read and Write
+ ✔ Metadata → Read
+Generate → Copy the token.
+ (You cannot see it again later.)
+
+❗ IMPORTANT
+When Git asks:
+Username for 'https://github.com':
+
+You enter:
+Your GitHub username (ShubhamDudhbhate)
+
+Then it asks:
+Password for “”
+
+You MUST paste your PAT (token)
+ NOT your GitHub password.
+
+✅ STEP 3 — Test push using HTTPS
+git push -u origin main
+
+It will ask:
+✔ Username → your GitHub username
+ ✔ Password → your PAT token
+If correct → push works.
+
+🌟 AFTER YOU LOGIN ONCE
+Git will remember your PAT using Windows Credential Manager.
+You won’t need to enter it again.
+
+⭐ SUMMARY OF HTTPS SETUP COMMANDS
+Set HTTPS remote:
+git remote set-url origin https://github.com/YourUser/YourRepo.git
+
+Clone using HTTPS:
+git clone https://github.com/YourUser/YourRepo.git
+
+Push using HTTPS:
+git push -u origin main
+
+Git will ask for username + PAT.
+
+
+
+METHOD 1 — Use Credential Manager (BEST for Windows)
+Git can save your token permanently using:
+Run this in WSL:
+git config --global credential.helper manager-core
+
+This uses Git Credential Manager (GCM) which securely stores your PAT in Windows Credential Manager.
+Now push:
+git push -u origin main
+
+It will ask:
+✔ Username → your GitHub username
+ ✔ Password → your PAT token
+Then GCM stores it forever.
+ Next time → no password asked.
+
+ IF YOU PREVIOUSLY UNSET CREDENTIALS
+Run this to clean old settings:
+git config --global --unset credential.helper
+git config --system --unset credential.helper 2>/dev/null
+git config --local --unset credential.helper 2>/dev/null
+
+Then set again:
+git config --global credential.helper manager-core
+
+_________________________________________________________________________
+
+
+
+
+
+
+Summery:
+
+✅ 1. SIMILARITIES (commands that are 100% SAME)
+Whether you use SSH or HTTPS, the following commands NEVER change:
+✔ Git Basics (same)
+git init
+git add .
+git commit -m "msg"
+git status
+git log
+
+✔ Branch commands (same)
+git branch
+git checkout -b feature
+git checkout main
+git merge feature
+
+✔ Local operations (same)
+Everything done inside your PC is 100% same for SSH & HTTPS.
+
+🚀 2. PUSH / PULL commands (same)
+git push
+git push -u origin main
+git pull
+git fetch
+
+Even here — SSH or HTTPS makes NO difference.
+
+🔥 3. WHAT IS DIFFERENT? Only ONE thing: the remote URL
+SSH remote URL looks like:
+git@github.com:Username/Repo.git
+
+HTTPS remote URL looks like:
+https://github.com/Username/Repo.git
+
+That’s the ONLY difference in commands.
+
+🔥 4. COMMANDS THAT ARE DIFFERENT
+A) Add remote
+SSH:
+git remote add origin git@github.com:Username/Repo.git
+
+HTTPS:
+git remote add origin https://github.com/Username/Repo.git
+
+B) Change remote
+SSH:
+git remote set-url origin git@github.com:Username/Repo.git
+
+HTTPS:
+git remote set-url origin https://github.com/Username/Repo.git
+
+C) Authentication required?
+SSH:
+ ✔️ No password
+ ✔️ No token
+ ✔️ Never asks again
+HTTPS:
+ ❌ Cannot use password
+ ✔️ Must use Personal Access Token (PAT)
+ 🔁 If no credential helper → asks again
+
+🧠 5. Authentication difference (VERY IMPORTANT)
+SSH Login Test
+ssh -T git@github.com
+
+If SSH keys are set → login works.
+HTTPS Login Uses PAT
+git push
+
+Then it asks:
+Username (GitHub username)
+
+
+Password → use PAT, not GitHub password
+
+
+
+🧩 6. When cloning — difference
+SSH:
+git clone git@github.com:Username/Repo.git
+
+HTTPS:
+git clone https://github.com/Username/Repo.git
+
+
+
+
+
+
+⭐ FINAL SUMMARY (super clear)
+
+
+
+
+Feature
+SSH
+HTTPS
+Remote URL
+git@github.com:user/repo.git
+https://github.com/user/repo.git
+Push ask login?
+❌ Never
+✔️ PAT required
+Setup requirement
+SSH keys
+PAT token
+Secure
+⭐⭐⭐⭐⭐
+⭐⭐⭐⭐
+Corporate networks
+❌ Sometimes blocked
+✔️ Always works
+Best for developers
+✔️ Yes
+⚠️ Okay
+Use in automation
+✔️ Yes
+✔️ Yes
+
+
+🏁 Conclusion
+👉 Git commands are 99% same for SSH and HTTPS.
+ 👉 Only the remote URL + authentication method are different.
+
+
+git@github.com:user/repo.git
+https://github.com/user/repo.git
+Push ask login?
+❌ Never
+✔️ PAT required
+Setup requirement
+SSH keys
+PAT token
+Secure
+⭐⭐⭐⭐⭐
+⭐⭐⭐⭐
+Corporate networks
+❌ Sometimes blocked
+✔️ Always works
+Best for developers
+✔️ Yes
+⚠️ Okay
+Use in automation
+✔️ Yes
+✔️ Yes
+
+
+🏁 Conclusion
+👉 Git commands are 99% same for SSH and HTTPS.
+ 👉 Only the remote URL + authentication method are different.
+
+
+
+
+
+Feature
+SSH
+HTTPS
+Remote URL
+git@github.com:user/repo.git
+https://github.com/user/repo.git
+Push ask login?
+❌ Never
+✔️ PAT required
+Setup requirement
+SSH keys
+PAT token
+Secure
+⭐⭐⭐⭐⭐
+⭐⭐⭐⭐
+Corporate networks
+❌ Sometimes blocked
+✔️ Always works
+Best for developers
+✔️ Yes
+⚠️ Okay
+Use in automation
+✔️ Yes
+✔️ Yes
+
+
+🏁 Conclusion
+👉 Git commands are 99% same for SSH and HTTPS.
+ 👉 Only the remote URL + authentication method are different.
+
